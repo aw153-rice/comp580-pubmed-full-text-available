@@ -1,0 +1,11 @@
+_ > nanoagent.plugin.v0001.ProductConfig:
+tagline: "See which papers PubMed offers as free full text."
+summary: "PubMed Full Text checks a list of PMIDs, DOIs, and titles with NCBI E-utilities. It returns the papers whose PubMed records are in the free full text subset, covering PMC, Bookshelf, and publisher free links."
+highlights:
+  - "Accepts PMIDs, DOIs, and exact titles in one list."
+  - "Uses PubMed's free full text filter."
+  - "Leaves out unresolved papers and refuses an ambiguous title or DOI."
+steps:
+  - "Give up to 20 papers, each as a PMID, a DOI, or a title."
+  - "The plugin resolves each one to a single PubMed record."
+  - "It returns the papers PubMed marks as free full text, in the order you gave them."

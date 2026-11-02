@@ -1,0 +1,32 @@
+_ > nanoagent.plugin.v0001.ManifestConfig:
+id: pubmed-full-text-available
+name: PubMed Full Text
+version: 0.1.0
+status: ready
+spec: nanoagent.plugin/v0001
+
+runtime > nanoagent.plugin.v0001.RuntimeConfig:
+  type: mcp_stdio
+  command: [uv, run, --frozen, python, -m, plugin]
+
+permissions > nanoagent.plugin.v0001.PermissionsConfig:
+  network > nanoagent.plugin.v0001.NetworkConfig:
+    hosts: [eutils.ncbi.nlm.nih.gov]
+  filesystem > nanoagent.plugin.v0001.FilesystemConfig:
+    write: [workspace]
+
+# One entry per contract.Tool; its input and output classes are contract.TOOLS's.
+tools > dict[contract.Tool, nanoagent.plugin.v0001.ToolConfig]:
+  full_text_available:
+    description: Resolve PMIDs, DOIs, and titles, and return the papers PubMed marks as free full text.
+  pin_full_text:
+    description: Pin that same free-full-text subset before the task runs, as the answer key.
+
+# One entry per contract.Task; its input and output classes are contract.TASKS's.
+tasks > dict[contract.Task, nanoagent.plugin.v0001.TaskConfig]:
+  pubmed-full-text-available:
+    description: Return the papers whose full text PubMed offers for free.
+    runner: tool
+    tools: [full_text_available]
+    reference: pin_full_text
+    instructions: Call full_text_available once with the papers, and return that tool's available list unchanged.
