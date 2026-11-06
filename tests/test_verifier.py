@@ -172,11 +172,13 @@ def test_verify_task_rejects_a_different_subset(tmp_path: Path):
     assert "reference" in verdict["message"]
 
 
-def test_verify_task_rejects_a_missing_reference(tmp_path: Path):
+def test_verify_task_accepts_the_workspace_when_the_reference_is_absent(tmp_path: Path):
     write_rows(tmp_path, ROWS)
     verdict = verifier.verify_task("pubmed-full-text-available", given(), made(KEPT), None, str(tmp_path))
-    assert verdict["valid"] is False
-    assert "missing" in verdict["message"]
+    assert verdict["valid"] is True
+    absent = verifier.verify_task("pubmed-full-text-available", given(), made(KEPT), None, str(tmp_path / "empty"))
+    assert absent["valid"] is False
+    assert "missing" in absent["message"]
 
 
 def test_verify_task_rejects_a_malformed_pmid(tmp_path: Path):

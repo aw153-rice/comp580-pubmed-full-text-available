@@ -28,16 +28,18 @@ def verify_task(arguments, output, reference, workspace):
     problem = input_problem(arguments) or output_problem(output)
     if problem:
         return result(False, problem[1])
-    if reference is None:
-        return result(False, "reference is missing")
-    problem = output_problem(reference)
-    if problem:
-        return result(False, problem[1])
-    if not same_papers(output.available, reference.available):
-        return result(False, "output does not match the reference")
+    # A tool run never receives the pin. Judge that call from availability.json.
+    if reference is not None:
+        problem = output_problem(reference)
+        if problem:
+            return result(False, problem[1])
+        if not same_papers(output.available, reference.available):
+            return result(False, "output does not match the reference")
     kind, payload = load_rows(workspace, arguments.papers)
     if kind != "ok":
         return result(False, payload)
     if not same_papers(output.available, subset_from_rows(arguments.papers, payload)):
         return result(False, "availability.json does not support the output")
+    if reference is None:
+        return result(True, "output matches the recorded rows")
     return result(True, "output matches the reference")
